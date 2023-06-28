@@ -152,7 +152,7 @@
     function getHolidays() {
     	  $.ajax({
     	    type: "GET",
-    	    url: "holidaysupd",    	  
+    	    url: "holidays",    	  
     	    success: function(response) {
     	      var containerDiv = $("#main");
     	      containerDiv.html(response);

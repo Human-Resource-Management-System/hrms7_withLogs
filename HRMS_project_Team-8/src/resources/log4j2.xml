@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+	<Properties>
+		<Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1} - %m%n</Property>
+		<Property name="basePath">D:/chandrasekhar/logs</Property>
+		<Property name="permissionLogsPath">${basePath}/permissions</Property>
+		<Property name="holidayLogsPath">${basePath}/holidays</Property>
+	</Properties>
+
+	<Appenders>
+		<Console name="console" target="SYSTEM_OUT" follow="true">
+			<PatternLayout pattern="${LOG_PATTERN}" />
+		</Console>
+
+		<RollingFile name="fileLogger" fileName="${basePath}/app.log"
+			filePattern="${basePath}/app-%d{yyyy-MM-dd}.log">
+			<PatternLayout>
+				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<SizeBasedTriggeringPolicy size="10MB" />
+			</Policies>
+			<!-- Max 10 files will be created every day -->
+			<DefaultRolloverStrategy max="10">
+				<Delete basePath="${basePath}" maxDepth="10">
+					<!-- Delete all files older than 30 days -->
+					<IfLastModified age="30d" />
+				</Delete>
+			</DefaultRolloverStrategy>
+		</RollingFile>
+
+		<RollingFile name="permissionLogger" fileName="${permissionLogsPath}/permissions.log"
+			filePattern="${permissionLogsPath}/permissions-%d{yyyy-MM-dd}.log">
+			<PatternLayout>
+				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<SizeBasedTriggeringPolicy size="10MB" />
+			</Policies>
+			<!-- Max 10 files will be created every day -->
+			<DefaultRolloverStrategy max="10">
+				<Delete basePath="${permissionLogsPath}" maxDepth="10">
+					<!-- Delete all files older than 30 days -->
+					<IfLastModified age="30d" />
+				</Delete>
+			</DefaultRolloverStrategy>
+		</RollingFile>
+
+
+		<RollingFile name="holidayLogger" fileName="${holidayLogsPath}/holidays.log"
+			filePattern="${holidayLogsPath}/holidays-%d{yyyy-MM-dd}.log">
+			<PatternLayout>
+				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<SizeBasedTriggeringPolicy size="10MB" />
+			</Policies>
+			<!-- Max 10 files will be created every day -->
+			<DefaultRolloverStrategy max="10">
+				<Delete basePath="${holidayLogsPath}" maxDepth="10">
+					<!-- Delete all files older than 30 days -->
+					<IfLastModified age="30d" />
+				</Delete>
+			</DefaultRolloverStrategy>
+		</RollingFile>
+	</Appenders>
+
+	<Loggers>
+		<Root level="info" additivity="false">
+			<AppenderRef ref="fileLogger" />
+			<AppenderRef ref="console" />
+		</Root>
+
+		<Logger name="controllers.HolidayController" level="info" additivity="false">
+			<AppenderRef ref="fileLogger" />
+			<AppenderRef ref="console" />
+			<AppenderRef ref="holidayLogger" />
+		</Logger>
+		
+		<Logger name="DAO.HolidayDAOImpl" level="info" additivity="false">
+			<AppenderRef ref="fileLogger" />
+			<AppenderRef ref="console" />
+			<AppenderRef ref="holidayLogger" />
+		</Logger>
+
+		<Logger name="controllers.PermissionsController" level="info" additivity="false">
+			<AppenderRef ref="fileLogger" />
+			<AppenderRef ref="permissionLogger" />
+			<AppenderRef ref="console" />
+		</Logger>
+			<Logger name="DAO.ApplyPermissionDaoImpl" level="info" additivity="false">
+			<AppenderRef ref="fileLogger" />
+			<AppenderRef ref="permissionLogger" />
+			<AppenderRef ref="console" />
+		</Logger>
+		
+	</Loggers>
+</Configuration>

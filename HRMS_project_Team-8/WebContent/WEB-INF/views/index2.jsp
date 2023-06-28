@@ -562,7 +562,7 @@ var fieldMessage = $('<div class="field-message" id="msg1">No of leaves taken</d
 	 $(".main").empty();
     	  $.ajax({
     	    type: "POST",
-    	    url: "holidaysupd",
+    	    url: "holidays",
     	    data: {},
     	    success: function(response) {
     	      var containerDiv = $(".main");

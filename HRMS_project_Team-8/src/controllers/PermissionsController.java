@@ -10,6 +10,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,7 @@ public class PermissionsController {
 	private ApplyPermissions ap;
 	private PermissionCompositeKey pcompositeKey;
 	private Gson gson;
+	private final Logger logger = LoggerFactory.getLogger(PermissionsController.class);
 
 	@Autowired
 	public PermissionsController(ApplyPermissionDao apdi, ApplyPermissions app, PermissionCompositeKey cKey,
@@ -50,6 +53,8 @@ public class PermissionsController {
 	@RequestMapping(value = "/getpermissions")
 	public String applyPermission(Model model, HttpSession session) {
 		// set employee id from session
+		logger.info("counts the number of permissions of an employee in a month and on that particular day");
+
 		int id = (int) session.getAttribute("employeeId");
 		Long daycount = apd.getEmployeeAndPermissionRequestDataCountPerDay(id, Date.valueOf(LocalDate.now()));
 		Long monthcount = apd.getEmployeeAndPermissionRequestDataCountPerMonth(id, LocalDate.now().getMonthValue(),
@@ -63,6 +68,7 @@ public class PermissionsController {
 	@RequestMapping(value = "/applyPermission", method = RequestMethod.POST)
 	public ResponseEntity<String> applyPermissionStatus(@ModelAttribute PermissionInputModel permissionInput) {
 		try {
+			logger.info("Request received for pemission form at employee side");
 
 			ap.setCurrent_date(Date.valueOf(permissionInput.getCurrent_date()));
 			// Convert the start and end time strings to Time objects
@@ -93,6 +99,9 @@ public class PermissionsController {
 	// To view permission requests by the admin
 	@RequestMapping(value = "/adminviewpermissions")
 	public String adminViewPermissionRequests(Model model, HttpSession session) {
+
+		logger.info("Request received for displaying permissions at admin side");
+
 		int id = (int) session.getAttribute("adminId");
 		List<Employee> employees = apd.getEmployeesByHRAndManager(id);
 		List<ApplyPermissions> outputmodel = new ArrayList<>();
@@ -111,6 +120,8 @@ public class PermissionsController {
 	@Transactional
 	public ResponseEntity<String> acceptPermission(@ModelAttribute PermissionAdminModel pm, HttpSession session) {
 		try {
+
+			logger.info("Admin accepted the permission for an employee");
 			int id = (int) session.getAttribute("adminId");
 			ApplyPermissions permission = apd.getPermissionByIdAndIndex(pm.getId(), pm.getIndex());
 			if (permission != null) {
@@ -134,7 +145,7 @@ public class PermissionsController {
 	@Transactional
 	public ResponseEntity<String> rejectPermission(@ModelAttribute PermissionAdminModel pm) {
 		try {
-
+			logger.info("Admin accepted the permission for an employee");
 			ApplyPermissions permission = apd.getPermissionByIdAndIndex(pm.getId(), pm.getIndex());
 			if (permission != null) {
 				permission.setEprq_status("reject");
@@ -153,6 +164,8 @@ public class PermissionsController {
 
 	@RequestMapping(value = "/permissionStatistics")
 	public ResponseEntity<String> getPermissionsCount(HttpSession session) {
+
+		logger.info("Request received to show permissions used and remaining for an employee in charts");
 		int id = (int) session.getAttribute("employeeId");
 		long count = apd.getEmployeeApprovedPermissionsCount(id, Year.now().getValue());
 
